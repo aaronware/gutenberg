@@ -35,7 +35,6 @@ function InsertionPointPopover( {
 	const { selectBlock, hideInsertionPoint } = useDispatch( blockEditorStore );
 	const openRef = useContext( InsertionPointOpenRef );
 	const ref = useRef();
-	const timer = useRef( null );
 	const {
 		orientation,
 		previousClientId,
@@ -183,14 +182,12 @@ function InsertionPointPopover( {
 	);
 
 	function onClick( event ) {
-		clearTimeout( timer?.current );
 		if ( event.target === ref.current && nextClientId ) {
 			selectBlock( nextClientId, -1 );
 		}
 	}
 
 	function onFocus( event ) {
-		clearTimeout( timer?.current );
 		// Only handle click on the wrapper specifically, and not an event
 		// bubbled from the inserter itself.
 		if ( event.target !== ref.current ) {
@@ -199,16 +196,9 @@ function InsertionPointPopover( {
 	}
 
 	function onFocusOutside() {
-		clearTimeout( timer?.current );
-		timer.current = setTimeout( () => {
-			if ( ! openRef.current ) {
-				hideInsertionPoint();
-			}
-		}, 1000 );
-	}
-
-	function onMouseEnter() {
-		clearTimeout( timer?.current );
+		if ( ! openRef.current ) {
+			hideInsertionPoint();
+		}
 	}
 
 	// Only show the in-between inserter between blocks, so when there's a
@@ -311,6 +301,7 @@ function InsertionPointPopover( {
 			// This makes sure the popover doesn't animate from its previous position.
 			key={ nextClientId + '--' + rootClientId }
 			onFocusOutside={ onFocusOutside }
+			onMouseLeave={ onFocusOutside }
 		>
 			<motion.div
 				layout={ ! disableMotion }
@@ -327,8 +318,6 @@ function InsertionPointPopover( {
 					'is-with-inserter': showInsertionPointInserter,
 				} ) }
 				style={ style }
-				onMouseLeave={ onFocusOutside }
-				onMouseEnter={ onMouseEnter }
 			>
 				<motion.div
 					variants={ lineVariants }

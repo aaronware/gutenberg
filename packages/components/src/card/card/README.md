@@ -6,7 +6,8 @@
 
 `Card` also provides a convenient set of [sub-components](#sub-components) such as `CardBody`, `CardHeader`, `CardFooter`, and more (see below).
 
-```jsx live
+```
+jsx live
 import {
 	Card,
 	CardHeader,
